@@ -30,7 +30,9 @@ type PollResponseDTO struct {
 	Votes       []int        `json:"votes"`
 	TotalVotes  int          `json:"totalVotes"`
 	Percentages []int        `json:"percentages"`
-	Status      string       `json:"status"`
-	CreatorID   string       `json:"creatorId,omitempty"`
-	CreatedAt   time.Time    `json:"createdAt"`
+	Status       string       `json:"status"`
+	PeakActivity string       `json:"peakActivity,omitempty"`
+	Activity     string       `json:"activity,omitempty"`
+	CreatorID    string       `json:"creatorId,omitempty"`
+	CreatedAt    time.Time    `json:"createdAt"`
 }

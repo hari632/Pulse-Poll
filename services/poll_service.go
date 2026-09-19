@@ -37,15 +37,18 @@ type CreatePollInput struct {
 
 type PollService struct {
 	pollRepository repositories.PollRepository
+	voteRepository repositories.VoteRepository
 	voteCounter    *repositories.RedisVoteCounter
 }
 
 func NewPollService(
 	pollRepository repositories.PollRepository,
+	voteRepository repositories.VoteRepository,
 	voteCounter *repositories.RedisVoteCounter,
 ) *PollService {
 	return &PollService{
 		pollRepository: pollRepository,
+		voteRepository: voteRepository,
 		voteCounter:    voteCounter,
 	}
 }
@@ -239,17 +242,28 @@ func (s *PollService) ToPollResponseDTO(ctx context.Context, poll *models.Poll) 
 		code = poll.ID
 	}
 
+	peakActivity := "No activity yet"
+	activity := "No votes yet"
+	if s.voteRepository != nil {
+		allVotes, err := s.voteRepository.FindByPollID(poll.ID)
+		if err == nil {
+			peakActivity, activity = calculateActivity(allVotes)
+		}
+	}
+
 	return &models.PollResponseDTO{
-		ID:          poll.ID,
-		Code:        code,
-		Question:    poll.Question,
-		Options:     optionTexts,
-		RawOptions:  poll.Options,
-		Votes:       votes,
-		TotalVotes:  totalVotes,
-		Percentages: percentages,
-		Status:      poll.Status,
-		CreatorID:   poll.CreatorID,
-		CreatedAt:   poll.CreatedAt,
+		ID:           poll.ID,
+		Code:         code,
+		Question:     poll.Question,
+		Options:      optionTexts,
+		RawOptions:   poll.Options,
+		Votes:        votes,
+		TotalVotes:   totalVotes,
+		Percentages:  percentages,
+		Status:       poll.Status,
+		PeakActivity: peakActivity,
+		Activity:     activity,
+		CreatorID:    poll.CreatorID,
+		CreatedAt:    poll.CreatedAt,
 	}
 }

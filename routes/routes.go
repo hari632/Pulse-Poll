@@ -42,6 +42,7 @@ func RegisterRoutes(
 
 	pollService := services.NewPollService(
 		pollRepository,
+		voteRepository,
 		voteCounter,
 	)
 

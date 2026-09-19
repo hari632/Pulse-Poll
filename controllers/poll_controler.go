@@ -98,15 +98,17 @@ func (p *PollController) GetPoll(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"poll":        poll,
-		"id":          poll.ID,
-		"code":        poll.Code,
-		"question":    poll.Question,
-		"options":     poll.Options,
-		"votes":       poll.Votes,
-		"status":      poll.Status,
-		"totalVotes":  poll.TotalVotes,
-		"percentages": poll.Percentages,
+		"poll":         poll,
+		"id":           poll.ID,
+		"code":         poll.Code,
+		"question":     poll.Question,
+		"options":      poll.Options,
+		"votes":        poll.Votes,
+		"status":       poll.Status,
+		"totalVotes":   poll.TotalVotes,
+		"percentages":  poll.Percentages,
+		"peakActivity": poll.PeakActivity,
+		"activity":     poll.Activity,
 	})
 }
 

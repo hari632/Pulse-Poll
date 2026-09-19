@@ -88,17 +88,30 @@ func calculateActivity(votes []*models.Vote) (string, string) {
 	peakActivity := "No activity yet"
 
 	if peakHour != "" {
-		if parsed, err := time.Parse(
-			"2006-01-02 15",
-			peakHour,
-		); err == nil {
-			peakActivity = parsed.Format("3:04 PM")
+		var peakVoteTime time.Time
+		for _, vote := range votes {
+			if vote != nil && vote.CreatedAt.Format("2006-01-02 15") == peakHour {
+				if vote.CreatedAt.After(peakVoteTime) {
+					peakVoteTime = vote.CreatedAt
+				}
+			}
+		}
+
+		if !peakVoteTime.IsZero() {
+			peakActivity = peakVoteTime.UTC().Format(time.RFC3339)
+		} else if parsed, err := time.Parse("2006-01-02 15", peakHour); err == nil {
+			peakActivity = parsed.UTC().Format(time.RFC3339)
 		}
 	}
 
-	activity := "+" +
-		strconv.Itoa(recentVotes) +
-		" votes in the last hour"
+	var activity string
+	if recentVotes == 0 {
+		activity = "0 votes in the last hour"
+	} else if recentVotes == 1 {
+		activity = "+1 vote in the last hour"
+	} else {
+		activity = "+" + strconv.Itoa(recentVotes) + " votes in the last hour"
+	}
 
 	return peakActivity, activity
 }
