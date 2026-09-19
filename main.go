@@ -25,6 +25,13 @@ func main() {
 	// ==========================================
 
 	mongoURI := os.Getenv("MONGODB_URI")
+	if mongoURI == "" {
+    log.Println("MONGODB_URI: NOT SET")
+} else if strings.HasPrefix(mongoURI, "mongodb+srv://") {
+    log.Println("MONGODB_URI: Atlas URI detected")
+} else {
+    log.Println("MONGODB_URI: value detected, but not Atlas")
+}
 
 	// Fallback to local MongoDB only if
 	// MONGODB_URI is not provided.
